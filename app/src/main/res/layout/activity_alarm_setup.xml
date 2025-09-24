@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    tools:context=".AlarmSetup">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/LoadIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#AE000000"
+        android:translationZ="1000dp"
+        android:visibility="gone">
+
+        <com.google.android.material.loadingindicator.LoadingIndicator
+            android:id="@+id/loadingIndicator"
+            style="@style/Widget.Material3.LoadingIndicator.Contained"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                app:menu="@menu/alarm_bar"
+                app:navigationIcon="@drawable/arrow_back"
+                app:title="Setup Alarms" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="Пара для походящего дня:"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/SchedDisplayer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="4dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView4">
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:background="?android:attr/listDivider"
+                    app:layout_constraintTop_toBottomOf="@+id/SchedDisplayer"
+                    tools:layout_editor_absoluteX="10dp" />
+
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:text="Установите сдвиг по времени для будильников: "
+                    app:layout_constraintBottom_toBottomOf="@+id/MinutesCorrection"
+                    app:layout_constraintEnd_toStartOf="@+id/CorrectionType"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/MinutesCorrection" />
+
+                <TextView
+                    android:id="@+id/CorrectionType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="@drawable/alarmcorrection"
+                    android:fontFamily="@font/zcool"
+                    android:gravity="center"
+                    android:minWidth="30dp"
+                    android:padding="8dp"
+                    android:text="-"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/HoursCorrection"
+                    app:layout_constraintEnd_toStartOf="@+id/HoursCorrection"
+                    app:layout_constraintTop_toTopOf="@+id/HoursCorrection" />
+
+                <TextView
+                    android:id="@+id/HoursCorrection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/alarmcorrection"
+                    android:fontFamily="@font/zcool"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:paddingEnd="6dp"
+                    android:text="00"
+                    android:textSize="48sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/MinutesCorrection"
+                    app:layout_constraintEnd_toStartOf="@+id/TimeCorrectionDivider"
+                    app:layout_constraintTop_toTopOf="@+id/MinutesCorrection" />
+
+
+                <TextView
+                    android:id="@+id/TimeCorrectionDivider"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/zcool"
+                    android:text=":"
+                    android:textSize="48sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/MinutesCorrection"
+                    app:layout_constraintEnd_toStartOf="@+id/MinutesCorrection"
+                    app:layout_constraintTop_toTopOf="@+id/MinutesCorrection" />
+
+                <TextView
+                    android:id="@+id/MinutesCorrection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/alarmcorrection"
+                    android:fontFamily="@font/zcool"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:paddingEnd="6dp"
+                    android:text="00"
+                    android:textSize="48sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
