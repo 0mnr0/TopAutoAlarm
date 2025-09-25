@@ -5,6 +5,7 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -82,17 +83,26 @@ public class MainActivity extends AppCompatActivity {
 
         JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         ComponentName componentName = new ComponentName(this, MainService.class);
-        JobInfo jobInfo = new JobInfo.Builder(8080, componentName)
-                .setPeriodic(30 * 60 * 1000)
-                .setPersisted(true)
-                .build();
 
-        int result = jobScheduler.schedule(jobInfo);
-        NotificationCenter.AskForPermissionIfNotPermitted(this, this);
-
-        if (!(result == JobScheduler.RESULT_SUCCESS)) {
-            Toast.makeText(this, "Ошибка планирования!", Toast.LENGTH_SHORT).show();
+        boolean hasJob = false;
+        for (JobInfo job : jobScheduler.getAllPendingJobs()) {
+            if (job.getId() == 1005) {
+                hasJob = true;
+                break;
+            }
         }
+
+        if (!hasJob) {
+            JobInfo.Builder builder = new JobInfo.Builder(1005, componentName).setPersisted(true);
+
+            final long intervalMillis = 30 * 60 * 1000L;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {builder.setPeriodic(intervalMillis, intervalMillis);
+            } else { builder.setPeriodic(intervalMillis); }
+
+            JobInfo jobInfo = builder.build(); jobScheduler.schedule(jobInfo);
+        }
+
+        NotificationCenter.AskForPermissionIfNotPermitted(this, this);
 
 
     }
