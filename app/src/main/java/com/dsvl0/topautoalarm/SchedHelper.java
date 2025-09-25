@@ -32,13 +32,15 @@ public class SchedHelper {
         if (BestTime.isEvening()) {
             String DayForAlarm = BestTime.forAlarm();
             String url = "https://msapi.top-academy.ru/api/v2/schedule/operations/get-by-date?date_filter=" + DayForAlarm;
-
+            Log.d("ServiceRunResult Run", "Init ATW");
             AccessTokenWorker accessTokenWorker = new AccessTokenWorker();
             accessTokenWorker.pushContext(context);
             accessTokenWorker.initAuthData();
+            Log.d("ServiceRunResult Run", "Init ATW - Finish. Fetching...");
             accessTokenWorker.fetchToken(new AccessTokenWorker.TokenCallback() {
                 @Override
                 public void onResult(String token) {
+                    Log.d("ServiceRunResult Run", "JWT Fetched. Fetching Sched...");
                     EasyFetch.run(
                             url,
                             "GET",
@@ -46,13 +48,14 @@ public class SchedHelper {
                             new OnReadyCallback() {
                                 @Override
                                 public void onReady(Object json, boolean isJson) {
+                                    Log.d("ServiceRunResult Run", "Sched Fetched");
                                     try {
                                         JSONArray Lessons = new JSONArray(json.toString());
                                         String FirstLessonTime = Lessons.getJSONObject(0).getString("started_at");
-
                                         callback.onResult(FirstLessonTime);
 
                                     } catch (JSONException e) {
+                                        Log.d("ServiceRunResult Run", "Sched Fetched but failed to parse    ");
                                         FailedTimes += 1;
                                         ReRunOperation(context, callback);
                                         callback.onError(e);
@@ -73,11 +76,14 @@ public class SchedHelper {
 
                 @Override
                 public void onError(Exception e) {
+                    Log.d("ServiceRunResult Run", "JWT Fetch Failed. Refetching...");
                     FailedTimes += 1;
                     ReRunOperation(context, callback);
                     callback.onError(e);
                 }
             });
+        } else {
+            Log.w("SchedHelper", "Skipping fetch because its not evening");
         }
     }
 

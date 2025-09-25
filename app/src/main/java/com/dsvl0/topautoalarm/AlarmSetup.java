@@ -79,9 +79,6 @@ public class AlarmSetup extends AppCompatActivity {
                     @Override
                     public void onReady(Object json, boolean isJson) {
                         DisplayShed(json.toString());
-                        runOnUiThread(() -> {
-                            Toast.makeText(AlarmSetup.this, "Объект пользователя получен :)", Toast.LENGTH_SHORT).show();
-                        });
                         loadingIndicator.setVisibility(View.GONE);
                     }
                     @Override
@@ -95,6 +92,7 @@ public class AlarmSetup extends AppCompatActivity {
         );
     }
 
+    int DisplayingTries = 0;
     private void DisplayShed(String ArrayOfJsons) {
         try {
             JSONArray ParsedJson = new JSONArray(ArrayOfJsons);
@@ -107,7 +105,11 @@ public class AlarmSetup extends AppCompatActivity {
 
 
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            DisplayingTries += 1;
+            Log.d("JSONException", e.toString());
+            if (DisplayingTries >= 3) {
+                Toast.makeText(this, "Не удалось получить расписание", Toast.LENGTH_SHORT).show();
+            }  else {GetShed();}
         }
     }
 

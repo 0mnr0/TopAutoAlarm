@@ -1,36 +1,39 @@
 package com.dsvl0.topautoalarm;
 
 import android.app.Service;
+import android.app.job.JobParameters;
+import android.app.job.JobScheduler;
+import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-public class MainService extends Service {
+public class MainService extends JobService {
     private Context context;
+    JobParameters sheduler;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
 
     private void onRunEvent(){
         SchedHelper schedHelper = new SchedHelper();
         if (!schedHelper.IsUserRegistered(context)) {
+            jobFinished(sheduler, true);
             return;
         }
         schedHelper.getFirstLessonTime(context,
-                new SchedHelper.LessonCallback() {
+                new SchedHelper.LessonCallback() { // Не работает
                     @Override
                     public void onResult(String time) {
-                        Toast.makeText(context, "Parsed Time:"+time, Toast.LENGTH_SHORT).show();
+                        Log.d("ServiceRunFinalResult S", String.valueOf(time));
+                        Toast.makeText(context, "Parsed Time: "+time, Toast.LENGTH_SHORT).show();
+                        jobFinished(sheduler, true);
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        Log.d("ServiceError", String.valueOf(e));
-                        Toast.makeText(context, "BRUH", Toast.LENGTH_SHORT).show();
+                        Log.d("ServiceRunFinalResult E", String.valueOf(e));
+                        jobFinished(sheduler, true);
                     }
 
                 });
@@ -38,26 +41,17 @@ public class MainService extends Service {
 
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public boolean onStartJob(JobParameters params) {
         context = this;
-        new Thread(() -> {
-            while (true) {
-                onRunEvent();
-                try {
-                    Thread.sleep(30000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
-
-        return START_STICKY;
+        sheduler = params;
+        onRunEvent();
+        return true;
     }
 
+
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    public boolean onStopJob(JobParameters params) {
+        return true;
     }
 
 }
