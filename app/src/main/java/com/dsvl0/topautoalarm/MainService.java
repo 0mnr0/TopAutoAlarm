@@ -68,6 +68,11 @@ public class MainService extends JobService {
                     }
 
                     @Override
+                    public void onEmptySched(){
+
+                    }
+
+                    @Override
                     public void onError(Exception e) {
                         Log.d("ServiceRunFinalResult E", String.valueOf(e));
                         jobFinished(sheduler, true);

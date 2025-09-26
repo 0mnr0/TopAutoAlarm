@@ -70,7 +70,8 @@ public class AlarmSetup extends AppCompatActivity {
 
 
     private void GetShed() {
-        final String url = "https://msapi.top-academy.ru/api/v2/schedule/operations/get-by-date?date_filter="+BestTime.forAlarm();
+        final String BestTime4Fetch = BestTime.forAlarm();
+        final String url = "https://msapi.top-academy.ru/api/v2/schedule/operations/get-by-date?date_filter="+BestTime4Fetch;
         EasyFetch.run(
                 url,
                 "GET",
@@ -78,7 +79,7 @@ public class AlarmSetup extends AppCompatActivity {
                 new OnReadyCallback() {
                     @Override
                     public void onReady(Object json, boolean isJson) {
-                        DisplayShed(json.toString());
+                        DisplayShed(json.toString(), BestTime4Fetch);
                         loadingIndicator.setVisibility(View.GONE);
                     }
                     @Override
@@ -93,15 +94,20 @@ public class AlarmSetup extends AppCompatActivity {
     }
 
     int DisplayingTries = 0;
-    private void DisplayShed(String ArrayOfJsons) {
+    private void DisplayShed(String ArrayOfJsons, String Date) {
         try {
             JSONArray ParsedJson = new JSONArray(ArrayOfJsons);
             CardSchedDisplaying cardSched = new CardSchedDisplaying(this, findViewById(R.id.SchedDisplayer));
-            JSONObject iterationObject = ParsedJson.getJSONObject(0);
-            Log.d("ParsedJson:", String.valueOf(iterationObject));
-            cardSched.add(
-                    iterationObject.getString("started_at") + " - " + iterationObject.getString("finished_at"),
-                    iterationObject.getString("subject_name"));
+            if (ParsedJson.length() >= 1) {
+                JSONObject iterationObject = ParsedJson.getJSONObject(0);
+                Log.d("ParsedJson:", String.valueOf(iterationObject));
+                cardSched.add(
+                        iterationObject.getString("started_at") + " - " + iterationObject.getString("finished_at"),
+                        iterationObject.getString("subject_name"));
+            } else {
+                cardSched.add("",
+                        "Пар на "+Date+" не найдено :)");
+            }
 
 
         } catch (JSONException e) {

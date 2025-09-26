@@ -20,6 +20,7 @@ public class CardSchedDisplaying {
         TextView tvTime = cardView.findViewById(R.id.tvTime);
         TextView tvSubject = cardView.findViewById(R.id.tvSubject);
         tvTime.setText(time);
+        if (time.isEmpty()) {tvTime.setVisibility(View.GONE);}
         tvSubject.setText(subjectName);
         container.addView(cardView);
     }

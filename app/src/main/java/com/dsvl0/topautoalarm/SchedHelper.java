@@ -14,6 +14,7 @@ public class SchedHelper {
     public interface LessonCallback {
         void onResult(String time);
         void onError(Exception e);
+        void onEmptySched();
     }
 
 
@@ -51,8 +52,12 @@ public class SchedHelper {
                                     Log.d("ServiceRunResult Run", "Sched Fetched");
                                     try {
                                         JSONArray Lessons = new JSONArray(json.toString());
-                                        String FirstLessonTime = Lessons.getJSONObject(0).getString("started_at");
-                                        callback.onResult(FirstLessonTime);
+                                        if (Lessons.length() >= 1) {
+                                            String FirstLessonTime = Lessons.getJSONObject(0).getString("started_at");
+                                            callback.onResult(FirstLessonTime);
+                                        } else {
+                                            callback.onEmptySched();
+                                        }
 
                                     } catch (JSONException e) {
                                         Log.d("ServiceRunResult Run", "Sched Fetched but failed to parse    ");
