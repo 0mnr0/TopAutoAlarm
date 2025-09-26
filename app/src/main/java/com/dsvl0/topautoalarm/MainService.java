@@ -22,7 +22,8 @@ public class MainService extends JobService {
 
 
     public String shiftTime(String time) {
-        Prefs TimePrefs = Prefs.init(context, "time");
+        Prefs TimePrefs = new Prefs();
+        TimePrefs.init(context, "CorrectionSettings");
         final int HoursCorrection = TimePrefs.getInt("Hours", 0);
         final int MinutesCorrection = TimePrefs.getInt("Minutes", 0);
         final boolean BackToTime = TimePrefs.getBool("BackToTime", true);

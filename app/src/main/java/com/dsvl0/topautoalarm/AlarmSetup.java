@@ -144,6 +144,8 @@ public class AlarmSetup extends AppCompatActivity {
         picker.addOnPositiveButtonClickListener(dialog -> {
             CorrectionHours = picker.getHour();
             CorrectionMinutes = picker.getMinute();
+
+            CorrectionSettings.init(this, "CorrectionSettings");
             CorrectionSettings.putInt("Hours", CorrectionHours);
             CorrectionSettings.putInt("Minutes", CorrectionMinutes);
             UpdateTimeCorrection();
@@ -164,10 +166,12 @@ public class AlarmSetup extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        CorrectionSettings = Prefs.init(this, "CorrectionSettings");
+        Prefs CorrectionSettings = new Prefs();
+        CorrectionSettings.init(this, "CorrectionSettings");
         CorrectionHours = CorrectionSettings.getInt("Hours", 0);
         CorrectionMinutes = CorrectionSettings.getInt("Minutes", 0);
         CorrectionBackToTime = CorrectionSettings.getBool("BackToTime", true);
+        Log.d("SavedSettings:", CorrectionHours+"|"+CorrectionMinutes+"|"+CorrectionBackToTime);
 
         AccessTokenWorker = new AccessTokenWorker();
         AccessTokenWorker.pushContext(this);

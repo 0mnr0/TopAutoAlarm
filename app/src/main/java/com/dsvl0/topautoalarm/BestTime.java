@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class BestTime {
+
     public static String now() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         return sdf.format(new Date());
@@ -25,6 +26,8 @@ public class BestTime {
         Date tomorrow = calendar.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-        return sdf.format(tomorrow);
+
+        return "2025-09-26";
+        //return sdf.format(tomorrow);
     }
 }

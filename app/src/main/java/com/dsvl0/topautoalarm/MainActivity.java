@@ -53,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        Prefs AuthData = Prefs.init(this, "authdata");
+        Prefs AuthData = new Prefs();
+        AuthData.init(this, "authdata");
         String AuthScheme = AuthData.getString("LoginCheme", null);
         String AuthLogin = AuthData.getString("login", null);
         String AuthPassword = AuthData.getString("password", null);

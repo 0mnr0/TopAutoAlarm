@@ -25,8 +25,9 @@ public class SchedHelper {
     }
 
     public boolean IsUserRegistered(Context context) {
-        Prefs UserPrefs = Prefs.init(context, "authdata");
-        return UserPrefs.isKeyExists("login") && UserPrefs.isKeyExists("password");
+        Prefs AuthData = new Prefs();
+        AuthData.init(context, "authdata");
+        return AuthData.isKeyExists("login") && AuthData.isKeyExists("password");
     }
 
     public void getFirstLessonTime(Context context, LessonCallback callback) {
