@@ -171,7 +171,6 @@ public class AlarmSetup extends AppCompatActivity {
         CorrectionHours = CorrectionSettings.getInt("Hours", 0);
         CorrectionMinutes = CorrectionSettings.getInt("Minutes", 0);
         CorrectionBackToTime = CorrectionSettings.getBool("BackToTime", true);
-        Log.d("SavedSettings:", CorrectionHours+"|"+CorrectionMinutes+"|"+CorrectionBackToTime);
 
         AccessTokenWorker = new AccessTokenWorker();
         AccessTokenWorker.pushContext(this);

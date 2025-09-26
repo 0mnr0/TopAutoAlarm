@@ -19,6 +19,9 @@ import java.util.Date;
 public class MainService extends JobService {
     private Context context;
     JobParameters sheduler;
+    final int AlarmUniqueID = 2704;
+
+    String LastTimeAlarmInstalled = "";
 
 
     public String shiftTime(String time) {
@@ -48,6 +51,13 @@ public class MainService extends JobService {
         }
     }
 
+    private int GetFinalHours(String finalTime) {
+        return Integer.parseInt(finalTime.split(":")[0]);
+    }
+    private int GetFinalMinutes(String finalTime) {
+        return Integer.parseInt(finalTime.split(":")[1]);
+    }
+
 
     private void onRunEvent(){
         SchedHelper schedHelper = new SchedHelper();
@@ -59,17 +69,36 @@ public class MainService extends JobService {
                 new SchedHelper.LessonCallback() { // Не работает
                     @Override
                     public void onResult(String time) {
+                        final String LastAlarmTime = AlarmHelper.getAlarmTime(context, AlarmUniqueID);
+
+                        if (LastAlarmTime != null && LastAlarmTime.equals(time)
+                                || LastTimeAlarmInstalled.equals(BestTime.now())
+                        ) {
+                            Log.d("ServiceRunFinalResult", "Будильник уже установлен");
+                            jobFinished(sheduler, true);
+                            return;
+                        }
+
                         String AlarmTime = shiftTime(time);
                         NotificationCenter.showNotification(context,
                                 "Новый будильник установлен!",
                                 "Пары в "+time+", будильник - в "+AlarmTime,
                                 "Завтра пары начинаются в "+time+" и с учетом указанного сдвига времени мы поставили будильник на "+AlarmTime);
 
+
+                        AlarmHelper.cancelAlarm(context, AlarmUniqueID);
+                        AlarmHelper.setAlarm(context, GetFinalHours(AlarmTime), GetFinalMinutes(AlarmTime), AlarmUniqueID);
+                        LastTimeAlarmInstalled = BestTime.now();
                         jobFinished(sheduler, true);
                     }
 
                     @Override
                     public void onEmptySched(){
+                        AlarmHelper.cancelAlarm(context, AlarmUniqueID);
+                        NotificationCenter.showNotification(context,
+                                "Будильников на завтра нет!",
+                                "Кажется пар завтра нет, как и будильников!",
+                                "Посмотрев пары на завтра мы увидели пустой список, поэтому будильника на завтра не будет :)");
 
                     }
 
