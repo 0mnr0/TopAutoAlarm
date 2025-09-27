@@ -94,7 +94,6 @@ public class AlarmHelper {
 
     }
 
-    // Отменяем будильник
     public static void cancelAlarm(Context context, int requestCode) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 

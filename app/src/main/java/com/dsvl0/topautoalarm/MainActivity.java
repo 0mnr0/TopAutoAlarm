@@ -1,11 +1,6 @@
 package com.dsvl0.topautoalarm;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +10,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -82,26 +76,12 @@ public class MainActivity extends AppCompatActivity {
             });
         });
 
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        ComponentName componentName = new ComponentName(this, MainService.class);
 
-        boolean hasJob = false;
-        for (JobInfo job : jobScheduler.getAllPendingJobs()) {
-            if (job.getId() == 1005) {
-                hasJob = true;
-                break;
-            }
+        Toast.makeText(this, "IsAlarmSet:"+PeriodicServiceStart.isAlarmSet(this), Toast.LENGTH_SHORT).show();
+        if (!PeriodicServiceStart.isAlarmSet(this)) {
+            PeriodicServiceStart.setRepeatingAlarm(this);
         }
-
-        if (!hasJob) {
-            JobInfo.Builder builder = new JobInfo.Builder(1005, componentName).setPersisted(true);
-
-            final long intervalMillis = 30 * 60 * 1000L;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {builder.setPeriodic(intervalMillis, intervalMillis);
-            } else { builder.setPeriodic(intervalMillis); }
-
-            JobInfo jobInfo = builder.build(); jobScheduler.schedule(jobInfo);
-        }
+        PeriodicServiceStart.setRepeatingAlarm(this);
 
         NotificationCenter.AskForPermissionIfNotPermitted(this, this);
 

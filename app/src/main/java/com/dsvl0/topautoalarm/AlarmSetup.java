@@ -1,17 +1,13 @@
 package com.dsvl0.topautoalarm;
 
 import android.app.AlarmManager;
-import android.app.TimePickerDialog;
 import android.content.Context;
-import android.net.eap.EapSessionConfig;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.CorrectionInfo;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -22,20 +18,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.color.DynamicColors;
-import com.google.android.material.loadingindicator.LoadingIndicator;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class AlarmSetup extends AppCompatActivity {
     ConstraintLayout loadingIndicator;
