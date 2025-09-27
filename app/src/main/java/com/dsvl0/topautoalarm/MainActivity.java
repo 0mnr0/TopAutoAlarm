@@ -1,7 +1,12 @@
 package com.dsvl0.topautoalarm;
 
+import android.app.AlarmManager;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -80,7 +85,18 @@ public class MainActivity extends AppCompatActivity {
         PeriodicServiceStart.setRepeatingAlarm(this);
 
         NotificationCenter.AskForPermissionIfNotPermitted(this, this);
+        RequestExactAlarms();
+    }
 
 
+    private void RequestExactAlarms() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Android 12+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            if (!alarmManager.canScheduleExactAlarms()) {
+                Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+            }
+        }
     }
 }
