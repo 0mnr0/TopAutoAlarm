@@ -129,6 +129,7 @@ public class AlarmSetup extends AppCompatActivity {
     public void showTimePicker() {
         MaterialTimePicker picker = new MaterialTimePicker.Builder()
                 .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
                 .setHour(CorrectionHours)
                 .setMinute(CorrectionMinutes)
                 .setTitleText("Укажите сдвиг по времени:")
@@ -138,10 +139,10 @@ public class AlarmSetup extends AppCompatActivity {
             CorrectionHours = picker.getHour();
             CorrectionMinutes = picker.getMinute();
 
-            CorrectionSettings = new Prefs();
-            CorrectionSettings.init(this, "CorrectionSettings");
-            CorrectionSettings.putInt("Hours", CorrectionHours);
-            CorrectionSettings.putInt("Minutes", CorrectionMinutes);
+            Prefs CorSettings = new Prefs();
+            CorSettings.init(this, "CorrectionSettings");
+            CorSettings.putInt("Hours", CorrectionHours);
+            CorSettings.putInt("Minutes", CorrectionMinutes);
             UpdateTimeCorrection();
         });
 
