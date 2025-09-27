@@ -14,9 +14,7 @@ import java.util.Date;
 
 public class MainService extends BroadcastReceiver {
     private Context context;
-    JobParameters sheduler;
     final int AlarmUniqueID = 2704;
-
     String LastTimeAlarmInstalled = "";
 
     @Override
@@ -24,7 +22,7 @@ public class MainService extends BroadcastReceiver {
         context = reciviedContext;
         NotificationCenter.showNotification(context,
                 "Service Triggered!",
-                "Просто информируем что сработал сервис!"
+                "Просто информируем что сработал сервис! (" +BestTime.HOURSandMINUTES()+")"
         );
 
         SchedHelper schedHelper = new SchedHelper();
@@ -35,7 +33,6 @@ public class MainService extends BroadcastReceiver {
         schedHelper.getFirstLessonTime(context, new SchedHelper.LessonCallback() {
             @Override
             public void onResult(String time) {
-                final int AlarmUniqueID = 2704;
                 final String LastAlarmTime = AlarmHelper.getAlarmTime(context, AlarmUniqueID);
 
                 if (LastAlarmTime != null && LastAlarmTime.equals(time)) {

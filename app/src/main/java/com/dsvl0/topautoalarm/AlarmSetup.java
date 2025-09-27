@@ -1,10 +1,15 @@
 package com.dsvl0.topautoalarm;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -143,6 +148,26 @@ public class AlarmSetup extends AppCompatActivity {
 
     }
 
+
+
+    @SuppressLint("BatteryLife")
+    public void requestIgnoreBatteryOptimizations(boolean OnlyVanilla) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // Android 6.0+
+
+            Intent intent = new Intent();
+            String packageName = getPackageName();
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            if (pm.isIgnoringBatteryOptimizations(packageName) && !OnlyVanilla) {
+                intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+            } else {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+            }
+            startActivity(intent);
+        }
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         DynamicColors.applyToActivityIfAvailable(this);
@@ -183,6 +208,7 @@ public class AlarmSetup extends AppCompatActivity {
         });
         UpdateTimeCorrection();
         canScheduleExactAlarms(this);
+        requestIgnoreBatteryOptimizations(true);
     }
 
     public boolean canScheduleExactAlarms(Context context) {

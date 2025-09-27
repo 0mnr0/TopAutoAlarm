@@ -18,7 +18,6 @@ import com.google.android.material.color.DynamicColors;
 
 public class MainActivity extends AppCompatActivity {
     ConstraintLayout LoadPanel;
-
     Button LogIn;
     EditText LoginData, PasswordData;
 
@@ -77,10 +76,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        Toast.makeText(this, "IsAlarmSet:"+PeriodicServiceStart.isAlarmSet(this), Toast.LENGTH_SHORT).show();
-        if (!PeriodicServiceStart.isAlarmSet(this)) {
-            PeriodicServiceStart.setRepeatingAlarm(this);
-        }
+        if (!PeriodicServiceStart.isAlarmSet(this)) { PeriodicServiceStart.setRepeatingAlarm(this); }
         PeriodicServiceStart.setRepeatingAlarm(this);
 
         NotificationCenter.AskForPermissionIfNotPermitted(this, this);

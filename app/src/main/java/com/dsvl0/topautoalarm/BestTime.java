@@ -12,6 +12,10 @@ public class BestTime {
         return sdf.format(new Date());
     }
 
+    public static String HOURSandMINUTES() {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return sdf.format(new Date());
+    }
 
     public static boolean isEvening() {
         Calendar now = Calendar.getInstance();
