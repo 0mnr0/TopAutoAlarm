@@ -138,6 +138,7 @@ public class AlarmSetup extends AppCompatActivity {
             CorrectionHours = picker.getHour();
             CorrectionMinutes = picker.getMinute();
 
+            CorrectionSettings = new Prefs();
             CorrectionSettings.init(this, "CorrectionSettings");
             CorrectionSettings.putInt("Hours", CorrectionHours);
             CorrectionSettings.putInt("Minutes", CorrectionMinutes);
