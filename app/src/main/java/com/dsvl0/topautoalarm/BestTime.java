@@ -29,9 +29,6 @@ public class BestTime {
         calendar.add(Calendar.DAY_OF_MONTH, plusDays);
         Date tomorrow = calendar.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-
-
-        return "2025-09-26";
-        //return sdf.format(tomorrow);
+        return sdf.format(tomorrow);
     }
 }

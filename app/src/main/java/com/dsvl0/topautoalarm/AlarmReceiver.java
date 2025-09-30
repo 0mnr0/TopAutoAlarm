@@ -8,6 +8,10 @@ import android.widget.Toast;
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        NotificationCenter.showNotification(context,
+                "Alarm Triggered!",
+                ":)"
+        );
     }
 }
 

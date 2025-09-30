@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 public class PeriodicServiceStart {
-    final static long interval = 30 * 1000; // 30 minutes
+    final static long interval = 30 * 60 * 1000; // 30 minutes
 
     public static void setRepeatingAlarm(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

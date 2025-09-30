@@ -35,7 +35,7 @@ public class AlarmHelper {
         long timeMillis = prefs.getLong("alarm_" + requestCode, -1);
 
         if (timeMillis == -1) {
-            return null; // Будильник не найден
+            return null;
         }
 
         Date date = new Date(timeMillis);

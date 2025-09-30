@@ -1,15 +1,18 @@
 package com.dsvl0.topautoalarm;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.PowerManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -18,18 +21,151 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import com.google.android.material.color.DynamicColors;
 
+import com.google.android.material.color.DynamicColors;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
-    ConstraintLayout LoadPanel;
-    Button LogIn;
-    EditText LoginData, PasswordData;
+    ConstraintLayout loadingIndicator;
+    AccessTokenWorker AccessTokenWorker;
+    TextView HoursCorrection, MinutesCorrection, CorrectionType;
+    int CorrectionHours, CorrectionMinutes = 0;
+    boolean CorrectionBackToTime = true;
+
+    Prefs CorrectionSettings;
 
 
-    private void RunAlarmSetup() {
-        Intent intent = new Intent(this, AlarmSetup.class);
-        startActivity(intent);
+    int tokenTryCount = 0;
+    public void initToken() {
+        AccessTokenWorker.fetchToken(new AccessTokenWorker.TokenCallback() {
+            @Override
+            public void onResult(String token) {
+                GetShed();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                tokenTryCount++;
+                if (tokenTryCount < 15) {
+                    new Handler().postDelayed(() -> initToken(), 2000);
+                } else {
+                    Toast.makeText(MainActivity.this, "Сервер TOP не отдал токен за 15 попыток, выход", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+        });
+    }
+
+
+    private void GetShed() {
+        final String BestTime4Fetch = BestTime.forAlarm();
+        final String url = "https://msapi.top-academy.ru/api/v2/schedule/operations/get-by-date?date_filter="+BestTime4Fetch;
+        EasyFetch.run(
+                url,
+                "GET",
+                null,
+                new OnReadyCallback() {
+                    @Override
+                    public void onReady(Object json, boolean isJson) {
+                        DisplayShed(json.toString(), BestTime4Fetch);
+                        loadingIndicator.setVisibility(View.GONE);
+                    }
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(MainActivity.this, "Не удалось получить расписание", Toast.LENGTH_SHORT).show();
+                        loadingIndicator.setVisibility(View.GONE);
+                    }
+                },
+                AccessTokenWorker.access_token,
+                EasyFetch.JournalREF
+        );
+    }
+
+    int DisplayingTries = 0;
+    private void DisplayShed(String ArrayOfJsons, String Date) {
+        try {
+            JSONArray ParsedJson = new JSONArray(ArrayOfJsons);
+            CardSchedDisplaying cardSched = new CardSchedDisplaying(this, findViewById(R.id.SchedDisplayer));
+            if (ParsedJson.length() >= 1) {
+                JSONObject iterationObject = ParsedJson.getJSONObject(0);
+                cardSched.add(
+                        iterationObject.getString("started_at") + " - " + iterationObject.getString("finished_at"),
+                        iterationObject.getString("subject_name"));
+            } else {
+                cardSched.add("",
+                        "Пар на "+Date+" не найдено :)");
+            }
+
+
+        } catch (JSONException e) {
+            DisplayingTries += 1;
+            Log.d("JSONException", e.toString());
+            if (DisplayingTries >= 3) {
+                Toast.makeText(this, "Не удалось получить расписание", Toast.LENGTH_SHORT).show();
+            }  else {GetShed();}
+        }
+    }
+
+    private void UpdateTimeCorrection() {
+        String CRCTN_HOURS = String.valueOf(CorrectionHours);
+        if (CRCTN_HOURS.length() == 1) { CRCTN_HOURS = "0"+CRCTN_HOURS; }
+
+        String CRCTN_MINUTES = String.valueOf(CorrectionMinutes);
+        if (CRCTN_MINUTES.length() == 1) { CRCTN_MINUTES = "0"+CRCTN_MINUTES; }
+
+        HoursCorrection.setText(CRCTN_HOURS);
+        MinutesCorrection.setText(CRCTN_MINUTES);
+        CorrectionType.setText(CorrectionBackToTime ? "-" : "+");
+
+
+    }
+
+    public void showTimePicker() {
+        MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+                .setHour(CorrectionHours)
+                .setMinute(CorrectionMinutes)
+                .setTitleText("Укажите сдвиг по времени:")
+                .build();
+
+        picker.addOnPositiveButtonClickListener(dialog -> {
+            CorrectionHours = picker.getHour();
+            CorrectionMinutes = picker.getMinute();
+
+            Prefs CorSettings = new Prefs();
+            CorSettings.init(this, "CorrectionSettings");
+            CorSettings.putInt("Hours", CorrectionHours);
+            CorSettings.putInt("Minutes", CorrectionMinutes);
+            UpdateTimeCorrection();
+        });
+
+        picker.show(getSupportFragmentManager(), "MATERIAL_TIME_PICKER");
+
+    }
+
+
+
+    @SuppressLint("BatteryLife")
+    public void requestIgnoreBatteryOptimizations(boolean OnlyVanilla) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // Android 6.0+
+
+            Intent intent = new Intent();
+            String packageName = getPackageName();
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            if (pm.isIgnoringBatteryOptimizations(packageName) && !OnlyVanilla) {
+                intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+            } else {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+            }
+            startActivity(intent);
+        }
     }
 
 
@@ -38,65 +174,51 @@ public class MainActivity extends AppCompatActivity {
         DynamicColors.applyToActivityIfAvailable(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_alarm_setup);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        LogIn = findViewById(R.id.LogIn);
-        LoginData = findViewById(R.id.LoginData);
-        LoadPanel = findViewById(R.id.LoadPanel);
-        PasswordData = findViewById(R.id.PasswordData);
+        Prefs CorrectionSettings = new Prefs();
+        CorrectionSettings.init(this, "CorrectionSettings");
+        CorrectionHours = CorrectionSettings.getInt("Hours", 0);
+        CorrectionMinutes = CorrectionSettings.getInt("Minutes", 0);
+        CorrectionBackToTime = CorrectionSettings.getBool("BackToTime", true);
+
+        AccessTokenWorker = new AccessTokenWorker();
+        AccessTokenWorker.pushContext(this);
+        AccessTokenWorker.initAuthData();
+
+        loadingIndicator = findViewById(R.id.LoadIndicator);
+        loadingIndicator.setVisibility(View.VISIBLE);
+        initToken();
 
 
+        HoursCorrection = findViewById(R.id.HoursCorrection);
+        MinutesCorrection = findViewById(R.id.MinutesCorrection);
+        CorrectionType = findViewById(R.id.CorrectionType);
 
-        Prefs AuthData = new Prefs();
-        AuthData.init(this, "authdata");
-        String AuthScheme = AuthData.getString("LoginCheme", null);
-        String AuthLogin = AuthData.getString("login", null);
-        String AuthPassword = AuthData.getString("password", null);
+        HoursCorrection.setOnClickListener(v -> showTimePicker());
+        MinutesCorrection.setOnClickListener(v -> showTimePicker());
 
-        if (AuthScheme != null && AuthLogin != null && AuthPassword != null) { RunAlarmSetup(); }
-        if (AuthData.isKeyExists("login")) { LoginData.setText(AuthData.getString("login", "")); }
-        if (AuthData.isKeyExists("password")) { PasswordData.setText(AuthData.getString("password", "")); }
-
-        LogIn.setOnClickListener(v -> {
-            LoadPanel.setVisibility(View.VISIBLE);
-            String Login = LoginData.getText().toString();
-            String Password = PasswordData.getText().toString();
-            AuthData.putString("login", Login);
-            AuthData.putString("password", Password);
-            AuthData.putString("LoginCheme", "Journal");
-
-            AccessTokenWorker TokenWorker = new AccessTokenWorker();
-            TokenWorker.pushContext(this);
-            TokenWorker.setAuthData(Login, Password);
-            TokenWorker.isAuthDataCorrect(isCorrect -> {
-                LoadPanel.setVisibility(View.GONE);
-                if (isCorrect) { RunAlarmSetup(); } else {
-                    Toast.makeText(this, "Неверный логин или пароль", Toast.LENGTH_SHORT).show();
-                }
-            });
+        CorrectionType.setOnClickListener(v -> {
+            CorrectionBackToTime = !CorrectionBackToTime;
+            CorrectionSettings.putBool("BackToTime", CorrectionBackToTime);
+            UpdateTimeCorrection();
         });
-
-
-        if (!PeriodicServiceStart.isAlarmSet(this)) { PeriodicServiceStart.setRepeatingAlarm(this); }
-        PeriodicServiceStart.setRepeatingAlarm(this);
-
-        NotificationCenter.AskForPermissionIfNotPermitted(this, this);
-        RequestExactAlarms();
+        UpdateTimeCorrection();
+        canScheduleExactAlarms(this);
+        requestIgnoreBatteryOptimizations(true);
     }
 
-
-    private void RequestExactAlarms() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Android 12+
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            if (!alarmManager.canScheduleExactAlarms()) {
-                Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-                intent.setData(Uri.parse("package:" + getPackageName()));
-                startActivity(intent);
-            }
+    public boolean canScheduleExactAlarms(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            return alarmManager.canScheduleExactAlarms();
         }
+        return true;
     }
+
+
 }
