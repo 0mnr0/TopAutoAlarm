@@ -107,4 +107,11 @@ public class AlarmHelper {
 
         alarmManager.cancel(pendingIntent);
     }
+
+
+    public static void setAlarmInMinutes(Context context, int minutes) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, minutes);
+        setAlarm(context, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), 123);
+    }
 }

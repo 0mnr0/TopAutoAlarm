@@ -20,11 +20,6 @@ public class MainService extends BroadcastReceiver {
     @Override
     public void onReceive(Context reciviedContext, Intent intent) {
         context = reciviedContext;
-        NotificationCenter.showNotification(context,
-                "Service Triggered!",
-                "Просто информируем что сработал сервис! (" +BestTime.HOURSandMINUTES()+")"
-        );
-
         SchedHelper schedHelper = new SchedHelper();
         if (!schedHelper.IsUserRegistered(context)) {
             return;

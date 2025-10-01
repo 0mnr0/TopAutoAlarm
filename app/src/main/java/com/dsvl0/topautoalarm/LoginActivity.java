@@ -87,12 +87,7 @@ public class LoginActivity extends AppCompatActivity {
         NotificationCenter.AskForPermissionIfNotPermitted(this, this);
         RequestExactAlarms();
 
-        AlarmHelper.setAlarm(
-                this,
-                9,
-                54,
-                3238
-        );
+
 
     }
 
