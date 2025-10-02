@@ -4,9 +4,17 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
+        tools:ignore="ForegroundServicesPolicy" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"
+        tools:ignore="ExactAlarmPolicy" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"
+        tools:ignore="FullScreenIntentPolicy" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
@@ -18,9 +26,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TopAutoAlarm">
+
         <activity
             android:name=".AlarmScreen"
-            android:exported="true" />
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:exported="true"
+            tools:targetApi="27"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
+
         <activity
             android:name=".MainActivity"
             android:exported="false" />
@@ -37,7 +53,11 @@
         <receiver
             android:name=".AlarmReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.dsvl0.topautoalarm.ALARM_ACTION" />
+            </intent-filter>
+        </receiver>
         <receiver
             android:name=".MainService"
             android:exported="true" />
@@ -48,6 +68,14 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".AlarmForegroundService"
+            android:foregroundServiceType="mediaPlayback|specialUse"
+            android:enabled="true"
+            android:exported="false" />
+
+
     </application>
 
 </manifest>

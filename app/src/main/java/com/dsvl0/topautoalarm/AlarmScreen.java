@@ -1,6 +1,7 @@
 package com.dsvl0.topautoalarm;
 
 import android.app.KeyguardManager;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -29,7 +30,7 @@ public class AlarmScreen extends AppCompatActivity {
     boolean isUserTriedToCloseApp = false;
     BasicAlarmSound alarmSounds = new BasicAlarmSound();
     public void wakingUp(View view) {
-        alarmSounds.stopAlarm();
+        exitApp();
     }
 
     public void schedTheAlarm(View view) {
@@ -64,13 +65,13 @@ public class AlarmScreen extends AppCompatActivity {
                 .setPositiveButton("OK", (dialog, which) -> {
                     String text = input.getText().toString();
                     if (randomAnswer == null || Double.parseDouble(text) == randomAnswer) {
-                        alarmSounds.stopAlarm();
                         Toast.makeText(this, "Это последние 10 минут...", Toast.LENGTH_SHORT).show();
                         AlarmHelper.setAlarmInMinutes(this, 10);
                     } else {
                         Toast.makeText(this, "ТОЛЬКО 2 МИНУТЫ", Toast.LENGTH_SHORT).show();
                         AlarmHelper.setAlarmInMinutes(this, 1);
                     }
+                    exitApp();
                 })
                 .setNeutralButton("Отмена", (dialog, which) -> {
                     dialog.dismiss();
@@ -112,16 +113,32 @@ public class AlarmScreen extends AppCompatActivity {
         }
     }
 
+    public void exitApp() {
+        alarmSounds.stopAlarm();
+        Intent serviceIntent = new Intent(this, AlarmForegroundService.class);
+        stopService(serviceIntent);
+        finish();
+    }
+
 
     @Override
     protected void onPause() {
         super.onPause();
+        exitApp();
         isUserTriedToCloseApp = true;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        exitApp();
+        isUserTriedToCloseApp = true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        exitApp();
         isUserTriedToCloseApp = true;
     }
 
