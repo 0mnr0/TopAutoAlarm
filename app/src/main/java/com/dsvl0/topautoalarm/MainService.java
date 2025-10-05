@@ -15,7 +15,6 @@ import java.util.Date;
 public class MainService extends BroadcastReceiver {
     private Context context;
     final int AlarmUniqueID = 2704;
-    String LastTimeAlarmInstalled = "";
 
     @Override
     public void onReceive(Context reciviedContext, Intent intent) {
@@ -25,22 +24,28 @@ public class MainService extends BroadcastReceiver {
             return;
         }
 
+
         schedHelper.getFirstLessonTime(context, new SchedHelper.LessonCallback() {
             @Override
             public void onResult(String time) {
-                final String LastAlarmTime = AlarmHelper.getAlarmTime(context, AlarmUniqueID);
-
-                if (LastAlarmTime != null && LastAlarmTime.equals(time)) {
-                    Log.d("ServiceRunFinalResult", "Будильник уже установлен");
+                String AlarmTime = shiftTime(context, time);
+                if (Brain.isActualAlarm(context, AlarmTime) == 1) {
                     return;
                 }
 
-                String AlarmTime = shiftTime(context, time);
+                String NotificationFullText = "Завтра пары начинаются в " + time +
+                        " и с учетом указанного сдвига времени мы поставили будильник на " + AlarmTime;
+
+                if (Brain.isActualAlarm(context, AlarmTime) == 2) {
+                    NotificationFullText = "Мы обнаружили изменение в расписании, так что теперь пары начинаются в " + time +
+                            " а будильник прозвенит в " + AlarmTime;
+                }
+
                 NotificationCenter.showNotification(context,
                         "Новый будильник установлен!",
                         "Пары в " + time + ", будильник - в " + AlarmTime,
-                        "Завтра пары начинаются в " + time +
-                                " и с учетом указанного сдвига времени мы поставили будильник на " + AlarmTime);
+                        NotificationFullText);
+
 
                 AlarmHelper.cancelAlarm(context, AlarmUniqueID);
                 AlarmHelper.setAlarm(context,
