@@ -76,8 +76,7 @@
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView4">
-                </LinearLayout>
+                    app:layout_constraintTop_toBottomOf="@+id/textView4"></LinearLayout>
 
                 <View
                     android:id="@+id/divider"
@@ -89,78 +88,100 @@
                     tools:layout_editor_absoluteX="10dp" />
 
 
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:text="Установите сдвиг по времени для будильников: "
-                    app:layout_constraintBottom_toBottomOf="@+id/MinutesCorrection"
-                    app:layout_constraintEnd_toStartOf="@+id/CorrectionType"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/MinutesCorrection" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/CalibrationSetting"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="10dp"
+                    app:layout_constraintTop_toBottomOf="@+id/divider"
+                    tools:layout_editor_absoluteX="10dp">
 
-                <TextView
-                    android:id="@+id/CorrectionType"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_marginEnd="4dp"
-                    android:background="@drawable/alarmcorrection"
-                    android:fontFamily="@font/zcool"
-                    android:gravity="center"
-                    android:minWidth="30dp"
-                    android:padding="8dp"
-                    android:text="-"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/HoursCorrection"
-                    app:layout_constraintEnd_toStartOf="@+id/HoursCorrection"
-                    app:layout_constraintTop_toTopOf="@+id/HoursCorrection" />
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="424dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Откалибруйте сдвиг по времени:"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/HoursCorrection"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/alarmcorrection"
-                    android:fontFamily="@font/zcool"
-                    android:gravity="center"
-                    android:padding="4dp"
-                    android:paddingEnd="6dp"
-                    android:text="00"
-                    android:textSize="48sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/MinutesCorrection"
-                    app:layout_constraintEnd_toStartOf="@+id/TimeCorrectionDivider"
-                    app:layout_constraintTop_toTopOf="@+id/MinutesCorrection" />
+                    <TextView
+                        android:id="@+id/CorrectionType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:background="@drawable/alarmcorrection"
+                        android:fontFamily="@font/zcool"
+                        android:gravity="center"
+                        android:minWidth="30dp"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        android:text="+"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/HoursCorrection"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
+                    <View
+                        android:id="@+id/divider3"
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="48dp"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/TimeCorrectionDivider"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/zcool"
-                    android:text=":"
-                    android:textSize="48sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/MinutesCorrection"
-                    app:layout_constraintEnd_toStartOf="@+id/MinutesCorrection"
-                    app:layout_constraintTop_toTopOf="@+id/MinutesCorrection" />
+                    <TextView
+                        android:id="@+id/HoursCorrection"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:background="@drawable/alarmcorrection"
+                        android:fontFamily="@font/zcool"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:text="00"
+                        android:textSize="48sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/TimeCorrectionDivider"
+                        app:layout_constraintStart_toEndOf="@+id/CorrectionType"
+                        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-                <TextView
-                    android:id="@+id/MinutesCorrection"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:background="@drawable/alarmcorrection"
-                    android:fontFamily="@font/zcool"
-                    android:gravity="center"
-                    android:padding="4dp"
-                    android:paddingEnd="6dp"
-                    android:text="00"
-                    android:textSize="48sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/divider" />
+                    <TextView
+                        android:id="@+id/TimeCorrectionDivider"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/zcool"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:text=":"
+                        android:textSize="48sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/divider3"
+                        app:layout_constraintStart_toStartOf="@+id/divider3"
+                        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+                    <TextView
+                        android:id="@+id/MinutesCorrection"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/alarmcorrection"
+                        android:fontFamily="@font/zcool"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:paddingEnd="6dp"
+                        android:text="00"
+                        android:textSize="48sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/TimeCorrectionDivider"
+                        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
